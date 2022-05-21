@@ -1,20 +1,20 @@
 {
   "extends": [
     "airbnb",
-    "airbnb/hooks",
-    "plugin:@typescript-eslint/recommended",
+    // "airbnb/hooks",
+    // "plugin:@typescript-eslint/recommended",
     "prettier",
     "plugin:prettier/recommended"
   ],
   "plugins": [
-    "@typescript-eslint",
+    // "@typescript-eslint",
     "prettier"
   ],
-  "parser": "@typescript-eslint/parser",
+  // "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2018,
-    "sourceType": "module",
-    "project": "./tsconfig.json"
+    "sourceType": "script"
+    // "project": "./tsconfig.json"
   },
   "rules": {
     "import/no-unresolved": 0,
@@ -28,19 +28,20 @@
       }
     ],
     "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": [
-      "error"
-    ],
+    // "@typescript-eslint/no-use-before-define": [
+    //   "error"
+    // ],
     "import/extensions": [
       "error",
       "never"
     ],
     "no-shadow": "off",
-    "@typescript-eslint/no-shadow": [
-      "error"
-    ],
-    "@typescript-eslint/explicit-module-boundary-types": 0,
+    // "@typescript-eslint/no-shadow": [
+    //   "error"
+    // ],
+    // "@typescript-eslint/explicit-module-boundary-types": 0,
     "import/prefer-default-export": 0,
-    "global-require": 0
+    "global-require": 0,
+    "no-console": "off"
   }
 }

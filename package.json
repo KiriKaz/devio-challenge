@@ -1,0 +1,18 @@
+{
+  "name": "devio-challenge",
+  "version": "0.1.0",
+  "description": "Solution for the Devio backend developer technical challenge.",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "keywords": [
+    "backend",
+    "devio",
+    "api",
+    "fast-food",
+    "swagger"
+  ],
+  "author": "qkjrmid",
+  "license": "MIT"
+}

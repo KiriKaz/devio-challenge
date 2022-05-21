@@ -5,6 +5,8 @@ const app = express();
 const { PORT } = require('./globals');
 const apiRouter = require('./routing');
 
+app.use(express.json());
+
 app.get('/', (req, res) => {
   res.send('');
 });

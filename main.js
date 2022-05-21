@@ -8,7 +8,7 @@ const apiRouter = require('./routing');
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('');
+  res.redirect('/api/v1/');
 });
 
 app.use('/api/v1/', apiRouter);

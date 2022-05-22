@@ -1,9 +1,9 @@
-const express = require('express');
+const { Router } = require('express');
 const { JsonDB } = require('node-json-db');
 
 const db = new JsonDB('./users.json', true);
 
-const router = express.Router();
+const router = Router();
 
 router.get('/', (req, res) => {
   const data = db.getData('/');

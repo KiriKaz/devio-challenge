@@ -1,272 +1,272 @@
 [
   {
-    "id": 1,
-    "nome": "Espresso Cafe Filtrado",
-    "nomeShort": "ESPFIL",
+    
+    "name": "Espresso Cafe Filtrado",
+    "id": "ESPFIL",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Espresso Tradicional",
-    "nomeShort": "ESPTRA",
+    
+    "name": "Espresso Tradicional",
+    "id": "ESPTRA",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Espresso Macchiato",
-    "nomeShort": "ESPMAC",
+    
+    "name": "Espresso Macchiato",
+    "id": "ESPMAC",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Espresso com Chantilly",
-    "nomeShort": "ESPCHA",
+    
+    "name": "Espresso com Chantilly",
+    "id": "ESPCHA",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Espresso Avela",
-    "nomeShort": "ESPAVL",
+    
+    "name": "Espresso Avela",
+    "id": "ESPAVL",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Espresso Brigadeiro",
-    "nomeShort": "ESPBRG",
+    
+    "name": "Espresso Brigadeiro",
+    "id": "ESPBRG",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cafe Americano",
-    "nomeShort": "CAFAMR",
+    
+    "name": "Cafe Americano",
+    "id": "CAFAMR",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cafe com Leite",
-    "nomeShort": "CAFLEI",
+    
+    "name": "Cafe com Leite",
+    "id": "CAFLEI",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Prensa Francesa",
-    "nomeShort": "CAFPNS",
+    
+    "name": "Prensa Francesa",
+    "id": "CAFPNS",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cafe Latte",
-    "nomeShort": "CAFLAT",
+    
+    "name": "Cafe Latte",
+    "id": "CAFLAT",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Flat White",
-    "nomeShort": "CAFFLT",
+    
+    "name": "Flat White",
+    "id": "CAFFLT",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cafe Mocha",
-    "nomeShort": "CAFMOC",
+    
+    "name": "Cafe Mocha",
+    "id": "CAFMOC",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cafe Mocha Branco",
-    "nomeShort": "CAFMBC",
+    
+    "name": "Cafe Mocha Branco",
+    "id": "CAFMBC",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Doce de Leite Latte",
-    "nomeShort": "CAFLTD",
+    
+    "name": "Doce de Leite Latte",
+    "id": "CAFLTD",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Caramelo Machiatto",
-    "nomeShort": "CRMMAC",
+    
+    "name": "Caramelo Machiatto",
+    "id": "CRMMAC",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cappuccino Tradicional",
-    "nomeShort": "CAPTRA",
+    
+    "name": "Cappuccino Tradicional",
+    "id": "CAPTRA",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cappuccino Canela",
-    "nomeShort": "CAPCAN",
+    
+    "name": "Cappuccino Canela",
+    "id": "CAPCAN",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cappuccino Chocolate",
-    "nomeShort": "CAPCHC",
+    
+    "name": "Cappuccino Chocolate",
+    "id": "CAPCHC",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Chocolate Classico",
-    "nomeShort": "CHCCLA",
+    
+    "name": "Chocolate Classico",
+    "id": "CHCCLA",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Chocolate Branco",
-    "nomeShort": "CHCBRA",
+    
+    "name": "Chocolate Branco",
+    "id": "CHCBRA",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cold Brew Nitro",
-    "nomeShort": "BRWNIT",
+    
+    "name": "Cold Brew Nitro",
+    "id": "BRWNIT",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cold Brew Tradicional",
-    "nomeShort": "BRWTRA",
+    
+    "name": "Cold Brew Tradicional",
+    "id": "BRWTRA",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cold Brew com Leite",
-    "nomeShort": "BRWLEI",
+    
+    "name": "Cold Brew com Leite",
+    "id": "BRWLEI",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cold Brew Baunilha",
-    "nomeShort": "BRWBAU",
+    
+    "name": "Cold Brew Baunilha",
+    "id": "BRWBAU",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Chocolate",
-    "nomeShort": "FRECHC",
+    
+    "name": "Frappuccino Chocolate",
+    "id": "FRECHC",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Chocolate Branco",
-    "nomeShort": "FRECHB",
+    
+    "name": "Frappuccino Chocolate Branco",
+    "id": "FRECHB",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Super Morango",
-    "nomeShort": "FRESPM",
+    
+    "name": "Frappuccino Super Morango",
+    "id": "FRESPM",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Brigadeiro",
-    "nomeShort": "FREBRG",
+    
+    "name": "Frappuccino Brigadeiro",
+    "id": "FREBRG",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Base Creme Doce de Leite",
-    "nomeShort": "FREDCL",
+    
+    "name": "Frappuccino Base Creme Doce de Leite",
+    "id": "FREDCL",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Baunilha",
-    "nomeShort": "FREBAU",
+    
+    "name": "Frappuccino Baunilha",
+    "id": "FREBAU",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Cafe",
-    "nomeShort": "FRFCAF",
+    
+    "name": "Frappuccino Cafe",
+    "id": "FRFCAF",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Caramelo",
-    "nomeShort": "FRFCRM",
+    
+    "name": "Frappuccino Caramelo",
+    "id": "FRFCRM",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Base Cafe Brigadeiro",
-    "nomeShort": "FRFBRG",
+    
+    "name": "Frappuccino Base Cafe Brigadeiro",
+    "id": "FRFBRG",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Base Cafe Mocha",
-    "nomeShort": "FRFMCA",
+    
+    "name": "Frappuccino Base Cafe Mocha",
+    "id": "FRFMCA",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Base Cafe Mocha Branco",
-    "nomeShort": "FRAMCB",
+    
+    "name": "Frappuccino Base Cafe Mocha Branco",
+    "id": "FRAMCB",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Base Cafe Doce de Leite",
-    "nomeShort": "FRFDCL",
+    
+    "name": "Frappuccino Base Cafe Doce de Leite",
+    "id": "FRFDCL",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Frappuccino Base Cafe Choco Chip",
-    "nomeShort": "FRFCHC",
+    
+    "name": "Frappuccino Base Cafe Choco Chip",
+    "id": "FRFCHC",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cha Quente",
-    "nomeShort": "CHAQUE",
+    
+    "name": "Cha Quente",
+    "id": "CHAQUE",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cha Gelado",
-    "nomeShort": "CHAGEL",
+    
+    "name": "Cha Gelado",
+    "id": "CHAGEL",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cha Gelado com Limonada e Blueberry",
-    "nomeShort": "CHAGLB",
+    
+    "name": "Cha Gelado com Limonada e Blueberry",
+    "id": "CHAGLB",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cha Gelado com Limonada",
-    "nomeShort": "CHAGLL",
+    
+    "name": "Cha Gelado com Limonada",
+    "id": "CHAGLL",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cha Latte Quente",
-    "nomeShort": "CHLQUE",
+    
+    "name": "Cha Latte Quente",
+    "id": "CHLQUE",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Cha Latte Gelado",
-    "nomeShort": "CHLGEL",
+    
+    "name": "Cha Latte Gelado",
+    "id": "CHLGEL",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Refresher Frutas Vermelhas",
-    "nomeShort": "REFFRV",
+    
+    "name": "Refresher Frutas Vermelhas",
+    "id": "REFFRV",
     "preco": 5.0
   },
   {
-    "id": 1,
-    "nome": "Refresher Limao",
-    "nomeShort": "REFLIM",
+    
+    "name": "Refresher Limao",
+    "id": "REFLIM",
     "preco": 5.0
   }
 ]

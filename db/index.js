@@ -23,6 +23,10 @@ class DBHolder {
     return this.products;
   }
 
+  getCurrentOrders() {
+    return this.orders;
+  }
+
   getDetailsAboutProduct(reference) {
     const ref = reference.toLowerCase();
     const found = this.products.filter(product => {
@@ -91,9 +95,19 @@ class DBHolder {
     console.log('New order created:\n', newOrder);
 
     delete this.cart[name];
-    return this;
+    return newOrder;
     // TODO implement add order w/ deleting earliest 5 if order count is >150
     // TODO this function can be expanded to save the history of fulfilled orders into a DB if need be
+  }
+
+  addObservationToOrder(reference, observation) {
+    this.orders = this.orders.map(order => {
+      if (order.client === reference || order.id === reference) {
+        return { ...order, observation };
+      }
+      return order;
+    });
+    return this;
   }
 }
 

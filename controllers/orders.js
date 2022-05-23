@@ -45,7 +45,7 @@ router.patch('/:order', (req, res) => {
       db.markOrderAsIncomplete(order);
       return res.status(200).end();
     case 'observation':
-      db.addObservationToOrder(order, req.body.observation);
+      db.modifyOrderObservation(order, req.body.observation);
       return res.status(200).end();
     default:
       return res.status(500).end();

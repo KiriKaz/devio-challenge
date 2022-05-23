@@ -100,7 +100,7 @@ class DBHolder {
     // TODO this function can be expanded to save the history of fulfilled orders into a DB if need be
   }
 
-  addObservationToOrder(reference, observation) {
+  modifyOrderObservation(reference, observation) {
     this.orders = this.orders.map(order => {
       if (order.client === reference || order.id === reference) {
         return { ...order, observation };

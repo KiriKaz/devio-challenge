@@ -1,0 +1,7 @@
+{
+  "procs": {
+    "backend": {
+      "shell": "npm start"
+    }
+  }
+}

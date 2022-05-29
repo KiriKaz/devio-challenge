@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { IDBHandlerStrategy, Order, Product } from "../types";
 
-export class JSONDBStrategy implements IDBHandlerStrategy {
+export class JSONdbStrategy implements IDBHandlerStrategy {
   products: Product[];
   orders: Order[];
   cart: any;

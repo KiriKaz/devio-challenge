@@ -1,5 +1,5 @@
-import { JSONDBStrategy } from "./JSONDBStrategy";
+import { JSONdbStrategy } from "./JSONdbStrategy";
 
-const db = new JSONDBStrategy();
+const db = new JSONdbStrategy();
 
 export default db;

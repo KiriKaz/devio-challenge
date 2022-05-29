@@ -15,7 +15,7 @@ class DBHolder {
   }
 
   save() {
-    this.products = {};
+    return this.products; // so the editor doesnt yell at me
     // TODO implement save function
   }
 
@@ -25,6 +25,12 @@ class DBHolder {
 
   getCurrentOrders() {
     return this.orders;
+  }
+
+  getDetailsAboutOrder(orderRef) {
+    return this.orders.filter(
+      order => order.orderId === orderRef || order.client === orderRef,
+    );
   }
 
   getDetailsAboutProduct(reference) {
@@ -42,15 +48,21 @@ class DBHolder {
     return found === [] ? -1 : found;
   }
 
-  addProductToCart(clientName, product) {
-    if (this.cart[clientName] === undefined) this.cart[clientName] = [product];
-    else this.cart[clientName] += product;
+  addProductToCart(clientName, productRef) {
+    const product = this.products.filter(
+      product => product.id === productRef || product.name === productRef,
+    );
+
+    if (product.length === 0) return -1;
+    if (this.cart[clientName] === undefined)
+      this.cart[clientName] = [product[0]];
+    else this.cart[clientName] += product[0];
     return this;
   }
 
-  markOrderAsComplete(orderid) {
-    this.orders.map(order => {
-      if (order.id === orderid) {
+  markOrderAsComplete(orderRef) {
+    this.orders = this.orders.map(order => {
+      if (order.id === orderRef || order.client === orderRef) {
         return { ...order, complete: true };
       }
       return { ...order };
@@ -59,9 +71,9 @@ class DBHolder {
     return this;
   }
 
-  markOrderAsIncomplete(orderid) {
+  markOrderAsIncomplete(orderRef) {
     this.orders.map(order => {
-      if (order.id === orderid) {
+      if (order.id === orderRef || order.client === orderRef) {
         return { ...order, complete: false };
       }
       return { ...order };
@@ -79,35 +91,46 @@ class DBHolder {
     if (this.cart[name] === undefined) return -2;
     if (this.cart[name].products === []) return -3;
 
+    const total = this.cart[name].reduce((prevTotal, currentProduct) => {
+      return prevTotal + currentProduct.price;
+    }, 0.0);
+
     const newOrder = {
       complete: false,
       orderId: uuidv4(),
       products: [...this.cart[name]],
-      total: this.cart[name].reduce(
-        (prev, current) => prev.price + current,
-        0.0,
-      ),
+      total,
       client: name,
       observation,
     };
 
     this.orders.push(newOrder);
-    console.log('New order created:\n', newOrder);
+    // console.log('New order created:\n', newOrder);
+
+    if (this.orders.length >= 150) {
+      const removedOrders = this.orders.splice(0, 5);
+      console.log('Five oldest orders removed:', removedOrders);
+      // TODO this part can be expanded to save the history of fulfilled orders into a DB if need be with this.save();
+    }
 
     delete this.cart[name];
     return newOrder;
-    // TODO implement add order w/ deleting earliest 5 if order count is >150
-    // TODO this function can be expanded to save the history of fulfilled orders into a DB if need be
   }
 
   modifyOrderObservation(reference, observation) {
-    this.orders = this.orders.map(order => {
-      if (order.client === reference || order.id === reference) {
-        return { ...order, observation };
-      }
-      return order;
-    });
-    return this;
+    try {
+      const modifiedOrders = this.orders.map(order => {
+        if (order.client === reference || order.id === reference) {
+          if (!order.complete) return { ...order, observation };
+          throw new Error('ALREADY COMPLETE');
+        }
+        return order;
+      });
+      this.orders = modifiedOrders;
+      return this;
+    } catch (e) {
+      return -1;
+    }
   }
 }
 

@@ -8,6 +8,11 @@ router.get('/', (req, res) => {
   return res.status(200).json(orders);
 });
 
+router.get('/:orderRef', (req, res) => {
+  const order = db.getDetailsAboutOrder(req.params.orderRef);
+  return res.status(200).json(order);
+});
+
 router.post('/checkout', (req, res) => {
   const { name, observation } = req.body;
 
@@ -44,9 +49,12 @@ router.patch('/:order', (req, res) => {
     case 'incomplete':
       db.markOrderAsIncomplete(order);
       return res.status(200).end();
-    case 'observation':
-      db.modifyOrderObservation(order, req.body.observation);
+    case 'observation': {
+      const ret = db.modifyOrderObservation(order, req.body.observation);
+      if (ret === -1)
+        return res.status(403).json({ error: 'ORDER_ALREADY_COMPLETE' });
       return res.status(200).end();
+    }
     default:
       return res.status(500).end();
   }

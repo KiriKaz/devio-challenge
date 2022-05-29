@@ -1,21 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
+import { IDBHandlerStrategy, Order, Product } from '../types';
 
-type Product = {
-  name: string,
-  id: string,
-  price: number
-}
-
-type Order = {
-  complete: boolean,
-  id: string,
-  products: Product[],
-  total: number,
-  client: string,
-  observation?: string,
-}
-
-class DBHolder {
+class DBHolder implements IDBHandlerStrategy {
   products: Product[];
   orders: Order[];
   cart: any;
@@ -27,33 +13,37 @@ class DBHolder {
     this.cart = {};
   }
 
+  private orderCheck(order: Order, ref: string) {
+    return order.id === ref || order.client === ref;
+  }
+
   reloadProductsFromMemory() {
-    // eslint-disable-next-line import/extensions
-    const products = require('../../produtos.json');
+    const products = require('../json/produtos.json');
     this.products = products;
     return this;
   }
 
-  save() {
-    return this.products; // so the editor doesnt yell at me
-    // TODO implement save function
+  save(): void {
+    return; // so the editor doesnt yell at me
+    // TODO implement save function?
   }
 
-  getProducts() {
+  getProducts(): Product[] {
     return this.products;
   }
 
-  getCurrentOrders() {
+  getCurrentOrders(): Order[] {
     return this.orders;
   }
 
-  getDetailsAboutOrder(orderRef: string) {
-    return this.orders.filter(
+  getDetailsAboutOrder(orderRef: string): Order | false {
+    const filtered = this.orders.filter(
       order => order.id === orderRef || order.client === orderRef,
-    );
+    )
+    return filtered.length === 1 ? filtered[0] : false;
   }
 
-  getDetailsAboutProduct(reference: string) {
+  getDetailsAboutProduct(reference: string): Product | false {
     const ref = reference.toLowerCase();
     const found = this.products.filter(product => {
       return (
@@ -65,48 +55,65 @@ class DBHolder {
     // return -1 to indicate there was an error, which
     // can be handled by the front end whichever way
     // they want.
-    return found === [] ? -1 : found;
+    return found === [] ? false : found[0];
   }
 
-  addProductToCart(clientName: string, productRef: string) {
+  addProductToCart(client: string, product: Product): boolean | -1 {
+    if (this.cart[client] === undefined)
+      this.cart[client] = [product];
+    else this.cart[client] += product;
+    return true;
+  }
+
+  addProductToCartWithRef(client: string, productRef: string): boolean | -1 {
     const product = this.products.filter(
       product => product.id === productRef || product.name === productRef,
     );
 
     if (product.length === 0) return -1;
-    if (this.cart[clientName] === undefined)
-      this.cart[clientName] = [product[0]];
-    else this.cart[clientName] += product[0];
-    return this;
+    if (this.cart[client] === undefined)
+      this.cart[client] = [product[0]];
+    else this.cart[client] += product[0];
+    return true;
   }
 
-  markOrderAsComplete(orderRef: string) {
+  markOrderAsComplete(orderRef: string): Order | false {
+    const foundOrder = this.orders.filter(order => this.orderCheck(order, orderRef))[0]
+    if(foundOrder === undefined) return false;
+
+    foundOrder.complete = true;
+
     this.orders = this.orders.map(order => {
-      if (order.id === orderRef || order.client === orderRef) {
-        return { ...order, complete: true };
+      if (this.orderCheck(order, orderRef)) {
+        return foundOrder;
       }
       return { ...order };
     });
 
-    return this;
+    return foundOrder;
   }
 
-  markOrderAsIncomplete(orderRef: string) {
-    this.orders.map(order => {
-      if (order.id === orderRef || order.client === orderRef) {
-        return { ...order, complete: false };
+  markOrderAsIncomplete(orderRef: string): Order | false {
+    const foundOrder = this.orders.filter(order => this.orderCheck(order, orderRef))[0]
+    if(foundOrder === undefined) return false;
+
+    foundOrder.complete = false;
+
+    this.orders = this.orders.map(order => {
+      if (this.orderCheck(order, orderRef)) {
+        return foundOrder;
       }
       return { ...order };
     });
 
-    return this;
+    return foundOrder;
   }
 
   getCurrentCart(clientName: string) {
     return this.cart[clientName];
   }
 
-  checkout(name: string, observation: string | undefined = undefined) {
+  checkout(name: string, observation: string | undefined = undefined): Order | -1 | -2 | -3 {
     if (typeof name !== 'string') return -1;
     if (this.cart[name] === undefined) return -2;
     if (this.cart[name].products === []) return -3;
@@ -137,18 +144,22 @@ class DBHolder {
     return newOrder;
   }
 
-  modifyOrderObservation(reference: string, observation: string | undefined) {
+  modifyOrderObservation(ref: string, observation: string | null): Order | -1 {
     try {
-      const modifiedOrders = this.orders.map(order => {
-        if (order.client === reference || order.id === reference) {
-          if (!order.complete) return { ...order, observation };
+      const foundOrder = this.orders.filter(order => this.orderCheck(order, ref))[0];
+      foundOrder.observation = observation ? observation : undefined;
+      
+      this.orders = this.orders.map(order => {
+        if (this.orderCheck(order, ref)) {
+          if (!order.complete) return foundOrder;
           throw new Error('ALREADY COMPLETE');
         }
         return order;
       });
-      this.orders = modifiedOrders;
-      return this;
+      
+      return foundOrder;
     } catch (e) {
+      console.log('Error during modifyOrderObs:', e);
       return -1;
     }
   }

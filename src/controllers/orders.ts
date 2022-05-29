@@ -33,7 +33,7 @@ router.post('/checkout', (req, res) => {
 router.post('/addProduct', (req, res) => {
   const { name, product } = req.body;
 
-  db.addProductToCart(name, product);
+  db.addProductToCartWithRef(name, product);
 
   return res.status(200).end();
 });

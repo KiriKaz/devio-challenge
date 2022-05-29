@@ -3,7 +3,6 @@ import express from 'express';
 import { PORT } from './globals';
 import apiRouter from './routing';
 
-
 const app = express();
 
 

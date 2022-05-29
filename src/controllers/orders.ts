@@ -3,20 +3,20 @@ import db from '../db';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-  const orders = db.getCurrentOrders();
+router.get('/', async (req, res) => {
+  const orders = await db.getCurrentOrders();
   return res.status(200).json(orders);
 });
 
-router.get('/:orderRef', (req, res) => {
-  const order = db.getDetailsAboutOrder(req.params.orderRef);
+router.get('/:orderRef', async (req, res) => {
+  const order = await db.getDetailsAboutOrder(req.params.orderRef);
   return res.status(200).json(order);
 });
 
-router.post('/checkout', (req, res) => {
+router.post('/checkout', async (req, res) => {
   const { name, observation } = req.body;
 
-  const ret = db.checkout(name, observation);
+  const ret = await db.checkout(name, observation);
 
   switch (ret) {
     case -1:
@@ -30,15 +30,16 @@ router.post('/checkout', (req, res) => {
   }
 });
 
-router.post('/addProduct', (req, res) => {
+router.post('/addProduct', async (req, res) => {
   const { name, product } = req.body;
 
-  db.addProductToCartWithRef(name, product);
+  const result = await db.addProductToCartWithRef(name, product);
+  if(result === -1) res.status(404).json({ error: 'PRODUCT_NOT_FOUND' })
 
   return res.status(200).end();
 });
 
-router.patch('/:order', (req, res) => {
+router.patch('/:order', async (req, res) => {
   const { op } = req.body;
   const { order } = req.params;
 
@@ -50,7 +51,7 @@ router.patch('/:order', (req, res) => {
       db.markOrderAsIncomplete(order);
       return res.status(200).end();
     case 'observation': {
-      const ret = db.modifyOrderObservation(order, req.body.observation);
+      const ret = await db.modifyOrderObservation(order, req.body.observation);
       if (ret === -1)
         return res.status(403).json({ error: 'ORDER_ALREADY_COMPLETE' });
       return res.status(200).end();

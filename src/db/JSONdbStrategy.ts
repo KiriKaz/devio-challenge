@@ -1,54 +1,52 @@
 import { v4 as uuidv4 } from 'uuid';
-import { IDBHandlerStrategy, Order, Product } from "../types";
+import { Cart, Client, IDBHandlerStrategy, Order, Product } from "../types";
 
 export class JSONdbStrategy implements IDBHandlerStrategy {
   products: Product[];
   orders: Order[];
-  cart: any;
+  clients: Client[];
   
   constructor() {
     this.products = [];
     this.reloadProductsFromMemory();
     this.orders = [];
-    this.cart = {};
+    this.clients = [];
   }
 
-  private orderCheck(order: Order, ref: string) {
-    return order.id === ref || order.client === ref;
-  }
+  private orderCheck(order: Order, ref: string) { return order._id === ref || order.client.name === ref; }
+
+  private clientCheck(client: Client, ref: string) { return client._id === ref || client.name === ref; }
 
   reloadProductsFromMemory() {
-    const products = require('../json/produtos.json');
+    const products = require('./json/produtos.json');
     this.products = products;
     return this;
   }
 
-  save(): void {
-    return; // so the editor doesnt yell at me
+  async save(): Promise<void> {
+    throw new Error("Method not implemented.");
     // TODO implement save function?
   }
 
-  getProducts(): Product[] {
+  async getProducts(): Promise<Product[]> {
     return this.products;
   }
 
-  getCurrentOrders(): Order[] {
+  async getCurrentOrders(): Promise<Order[]> {
     return this.orders;
   }
 
-  getDetailsAboutOrder(orderRef: string): Order | false {
+  async getDetailsAboutOrder(orderRef: string): Promise<false | Order> {
     const filtered = this.orders.filter(
-      order => order.id === orderRef || order.client === orderRef,
+      order => order._id === orderRef || order.client.name === orderRef,
     )
     return filtered.length === 1 ? filtered[0] : false;
   }
 
-  getDetailsAboutProduct(reference: string): Product | false {
+  async getDetailsAboutProduct(reference: string): Promise<false | Product> {
     const ref = reference.toLowerCase();
     const found = this.products.filter(product => {
-      return (
-        product.name.toLowerCase() === ref || product.id.toLowerCase() === ref
-      );
+      return product.name.toLowerCase() === ref || product._id.toLowerCase() === ref;
     });
 
     // If there is no product by the given reference,
@@ -58,26 +56,77 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     return found === [] ? false : found[0];
   }
 
-  addProductToCart(client: string, product: Product): boolean | -1 {
-    if (this.cart[client] === undefined)
-      this.cart[client] = [product];
-    else this.cart[client] += product;
+  async addProductToCart(clientReference: string, product: Product): Promise<boolean> {
+    const foundClient = this.clients.filter(client => this.clientCheck(client, clientReference))[0]
+    if (foundClient === undefined) this.clients.push({
+      _id: uuidv4(),
+      name: clientReference,
+      cart: {
+        products: [product],
+        total: product.price
+      }
+    });
+    else {
+      this.clients = this.clients.map(client => {
+        if (this.clientCheck(client, clientReference)) {
+          const clientCart: Cart = foundClient.cart ? foundClient.cart : {
+            products: [],
+            total: 0
+          };
+          const clientProducts: Product[] = clientCart.products;
+
+          const newClientObject: Client = {
+            ...foundClient,
+            cart: {
+              ...clientCart,
+              products: [
+                ...clientProducts,
+                product
+              ]
+            }
+          }
+          return newClientObject;
+        }
+        
+        return client;
+      });
+    }
     return true;
   }
 
-  addProductToCartWithRef(client: string, productRef: string): boolean | -1 {
+  async addProductToCartWithRef(clientRef: string, productRef: string): Promise<boolean | -1> {
     const product = this.products.filter(
-      product => product.id === productRef || product.name === productRef,
-    );
+      product => product._id === productRef || product.name === productRef,
+    )[0];
 
-    if (product.length === 0) return -1;
-    if (this.cart[client] === undefined)
-      this.cart[client] = [product[0]];
-    else this.cart[client] += product[0];
+    if (product === undefined) return -1;
+
+    const client = this.clients.filter(client => this.clientCheck(client, clientRef));
+    if (client.length === 0) {
+      this.clients.push({
+        _id: uuidv4(),
+        name: clientRef,
+        cart: {
+          products: [product],
+          total: product.price
+        }
+      });
+    } else {
+      this.clients = this.clients.map(client => {
+        if (this.clientCheck(client, clientRef)) {
+          // favor immutability
+          const newClient = {...client};
+          newClient.cart.products.push(product);
+          return newClient;
+        }
+        return client;
+      })
+    }
+
     return true;
   }
 
-  markOrderAsComplete(orderRef: string): Order | false {
+  async markOrderAsComplete(orderRef: string): Promise<false | Order> {
     const foundOrder = this.orders.filter(order => this.orderCheck(order, orderRef))[0]
     if(foundOrder === undefined) return false;
 
@@ -93,7 +142,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     return foundOrder;
   }
 
-  markOrderAsIncomplete(orderRef: string): Order | false {
+  async markOrderAsIncomplete(orderRef: string): Promise<false | Order> {
     const foundOrder = this.orders.filter(order => this.orderCheck(order, orderRef))[0]
     if(foundOrder === undefined) return false;
 
@@ -109,42 +158,55 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     return foundOrder;
   }
 
-  getCurrentCart(clientName: string) {
-    return this.cart[clientName];
+  async getClientCurrentCart(clientRef: string): Promise<Cart> {
+    return this.clients.filter(client => this.clientCheck(client, clientRef))[0].cart;
   }
 
-  checkout(name: string, observation: string | undefined = undefined): Order | -1 | -2 | -3 {
-    if (typeof name !== 'string') return -1;
-    if (this.cart[name] === undefined) return -2;
-    if (this.cart[name].products === []) return -3;
+  async checkout(clientRef: string, observation?: string): Promise<Order | -1 | -2> {
+    
+    const foundClient = this.clients.filter(client => this.clientCheck(client, clientRef))[0];
+    if (foundClient === undefined) return -1;
+    const products = foundClient.cart.products;
+    if (products === []) return -2;
 
-    const total = this.cart[name].reduce((prevTotal: number, currentProduct: Product) => {
+    const total = products.reduce((prevTotal: number, currentProduct: Product) => {
       return prevTotal + currentProduct.price;
     }, 0.0);
 
     const newOrder: Order = {
       complete: false,
-      id: uuidv4(),
-      products: [...this.cart[name]],
-      total,
-      client: name,
-      observation,
+      _id: uuidv4(),
+      cart: {
+        products,
+        total
+      },
+      client: foundClient,
+      observation
     };
 
     this.orders.push(newOrder);
-    // console.log('New order created:\n', newOrder);
+    console.log('New order created:\n', newOrder);
 
     if (this.orders.length >= 150) {
       const removedOrders = this.orders.splice(0, 5);
       console.log('Five oldest orders removed:', removedOrders);
-      // TODO this part can be expanded to save the history of fulfilled orders into a DB if need be with this.save();
+      // TODO this part can be expanded to save the history of fulfilled orders into a json file if need be with this.save();
     }
 
-    delete this.cart[name];
+    this.clients = this.clients.map(client => {
+      if(this.clientCheck(client, clientRef)) {
+        const newClient: Client = {...client, cart: {
+          products: [],
+          total: 0.0
+        }};
+        return newClient;
+      }
+      return client;
+    });
     return newOrder;
   }
 
-  modifyOrderObservation(ref: string, observation: string | null): Order | -1 {
+  async modifyOrderObservation(ref: string, observation: string | null): Promise<Order | -1> {
     try {
       const foundOrder = this.orders.filter(order => this.orderCheck(order, ref))[0];
       foundOrder.observation = observation ? observation : undefined;

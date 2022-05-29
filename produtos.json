@@ -3,270 +3,270 @@
     
     "name": "Espresso Cafe Filtrado",
     "id": "ESPFIL",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Espresso Tradicional",
     "id": "ESPTRA",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Espresso Macchiato",
     "id": "ESPMAC",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Espresso com Chantilly",
     "id": "ESPCHA",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Espresso Avela",
     "id": "ESPAVL",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Espresso Brigadeiro",
     "id": "ESPBRG",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cafe Americano",
     "id": "CAFAMR",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cafe com Leite",
     "id": "CAFLEI",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Prensa Francesa",
     "id": "CAFPNS",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cafe Latte",
     "id": "CAFLAT",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Flat White",
     "id": "CAFFLT",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cafe Mocha",
     "id": "CAFMOC",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cafe Mocha Branco",
     "id": "CAFMBC",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Doce de Leite Latte",
     "id": "CAFLTD",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Caramelo Machiatto",
     "id": "CRMMAC",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cappuccino Tradicional",
     "id": "CAPTRA",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cappuccino Canela",
     "id": "CAPCAN",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cappuccino Chocolate",
     "id": "CAPCHC",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Chocolate Classico",
     "id": "CHCCLA",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Chocolate Branco",
     "id": "CHCBRA",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cold Brew Nitro",
     "id": "BRWNIT",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cold Brew Tradicional",
     "id": "BRWTRA",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cold Brew com Leite",
     "id": "BRWLEI",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cold Brew Baunilha",
     "id": "BRWBAU",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Chocolate",
     "id": "FRECHC",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Chocolate Branco",
     "id": "FRECHB",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Super Morango",
     "id": "FRESPM",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Brigadeiro",
     "id": "FREBRG",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Base Creme Doce de Leite",
     "id": "FREDCL",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Baunilha",
     "id": "FREBAU",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Cafe",
     "id": "FRFCAF",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Caramelo",
     "id": "FRFCRM",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Base Cafe Brigadeiro",
     "id": "FRFBRG",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Base Cafe Mocha",
     "id": "FRFMCA",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Base Cafe Mocha Branco",
     "id": "FRAMCB",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Base Cafe Doce de Leite",
     "id": "FRFDCL",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Frappuccino Base Cafe Choco Chip",
     "id": "FRFCHC",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cha Quente",
     "id": "CHAQUE",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cha Gelado",
     "id": "CHAGEL",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cha Gelado com Limonada e Blueberry",
     "id": "CHAGLB",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cha Gelado com Limonada",
     "id": "CHAGLL",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cha Latte Quente",
     "id": "CHLQUE",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Cha Latte Gelado",
     "id": "CHLGEL",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Refresher Frutas Vermelhas",
     "id": "REFFRV",
-    "preco": 5.0
+    "price": 5.0
   },
   {
     
     "name": "Refresher Limao",
     "id": "REFLIM",
-    "preco": 5.0
+    "price": 5.0
   }
 ]

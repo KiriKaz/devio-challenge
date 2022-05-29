@@ -1,5 +1,5 @@
-const { Router } = require('express');
-const db = require('../db');
+import { Router } from 'express';
+import db from '../db';
 
 const router = Router();
 
@@ -60,4 +60,4 @@ router.patch('/:order', (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

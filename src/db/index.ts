@@ -1,7 +1,27 @@
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
+
+type Product = {
+  name: string,
+  id: string,
+  price: number
+}
+
+type Order = {
+  complete: boolean,
+  id: string,
+  products: Product[],
+  total: number,
+  client: string,
+  observation?: string,
+}
 
 class DBHolder {
+  products: Product[];
+  orders: Order[];
+  cart: any;
+  
   constructor() {
+    this.products = [];
     this.reloadProductsFromMemory();
     this.orders = [];
     this.cart = {};
@@ -9,7 +29,7 @@ class DBHolder {
 
   reloadProductsFromMemory() {
     // eslint-disable-next-line import/extensions
-    const products = require('../produtos.json');
+    const products = require('../../produtos.json');
     this.products = products;
     return this;
   }
@@ -27,13 +47,13 @@ class DBHolder {
     return this.orders;
   }
 
-  getDetailsAboutOrder(orderRef) {
+  getDetailsAboutOrder(orderRef: string) {
     return this.orders.filter(
-      order => order.orderId === orderRef || order.client === orderRef,
+      order => order.id === orderRef || order.client === orderRef,
     );
   }
 
-  getDetailsAboutProduct(reference) {
+  getDetailsAboutProduct(reference: string) {
     const ref = reference.toLowerCase();
     const found = this.products.filter(product => {
       return (
@@ -48,7 +68,7 @@ class DBHolder {
     return found === [] ? -1 : found;
   }
 
-  addProductToCart(clientName, productRef) {
+  addProductToCart(clientName: string, productRef: string) {
     const product = this.products.filter(
       product => product.id === productRef || product.name === productRef,
     );
@@ -60,7 +80,7 @@ class DBHolder {
     return this;
   }
 
-  markOrderAsComplete(orderRef) {
+  markOrderAsComplete(orderRef: string) {
     this.orders = this.orders.map(order => {
       if (order.id === orderRef || order.client === orderRef) {
         return { ...order, complete: true };
@@ -71,7 +91,7 @@ class DBHolder {
     return this;
   }
 
-  markOrderAsIncomplete(orderRef) {
+  markOrderAsIncomplete(orderRef: string) {
     this.orders.map(order => {
       if (order.id === orderRef || order.client === orderRef) {
         return { ...order, complete: false };
@@ -82,22 +102,22 @@ class DBHolder {
     return this;
   }
 
-  getCurrentCart(clientName) {
+  getCurrentCart(clientName: string) {
     return this.cart[clientName];
   }
 
-  checkout(name, observation = undefined) {
+  checkout(name: string, observation: string | undefined = undefined) {
     if (typeof name !== 'string') return -1;
     if (this.cart[name] === undefined) return -2;
     if (this.cart[name].products === []) return -3;
 
-    const total = this.cart[name].reduce((prevTotal, currentProduct) => {
+    const total = this.cart[name].reduce((prevTotal: number, currentProduct: Product) => {
       return prevTotal + currentProduct.price;
     }, 0.0);
 
-    const newOrder = {
+    const newOrder: Order = {
       complete: false,
-      orderId: uuidv4(),
+      id: uuidv4(),
       products: [...this.cart[name]],
       total,
       client: name,
@@ -117,7 +137,7 @@ class DBHolder {
     return newOrder;
   }
 
-  modifyOrderObservation(reference, observation) {
+  modifyOrderObservation(reference: string, observation: string | undefined) {
     try {
       const modifiedOrders = this.orders.map(order => {
         if (order.client === reference || order.id === reference) {
@@ -136,4 +156,4 @@ class DBHolder {
 
 const db = new DBHolder();
 
-module.exports = db;
+export default db;

@@ -1,5 +1,5 @@
-const { Router } = require('express');
-const db = require('../db');
+import { Router } from 'express';
+import db from '../db';
 
 const router = Router();
 
@@ -16,4 +16,4 @@ router.get('/:productReference', (req, res) => {
   return res.status(200).send(data);
 });
 
-module.exports = router;
+export default router;

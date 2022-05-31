@@ -31,7 +31,7 @@ export interface IDBHandlerStrategy {
   getCurrentOrders(): Promise<Order[]>
   getDetailsAboutOrder(reference: string): Promise<Order | false>
   getDetailsAboutProduct(reference: string): Promise<Product | false>
-  addProductToCart(client: string, product: Product): Promise<boolean | -1>
+  addProductToCart(client: string, product: Product): Promise<boolean>
   addProductToCartWithRef(client: string, productRef: string): Promise<boolean | -1>
   markOrderAsComplete(reference: string): Promise<Order | false>
   markOrderAsIncomplete(reference: string): Promise<Order | false>

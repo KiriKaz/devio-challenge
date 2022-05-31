@@ -22,7 +22,8 @@
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "/node_modules/"
-    ]
+    ],
+    "setupFiles": ["dotenv/config"]
   },
   "dependencies": {
     "@types/morgan": "^1.9.3",

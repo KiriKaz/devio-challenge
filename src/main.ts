@@ -1,10 +1,12 @@
 import type { Request, Response } from "express";
 import express from 'express';
+import morgan from 'morgan';
 import { PORT } from './globals';
 import apiRouter from './routing';
 
 const app = express();
 
+app.use(morgan('tiny'))
 
 app.use(express.json());
 

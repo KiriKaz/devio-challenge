@@ -53,7 +53,7 @@ router.patch('/:order', async (req, res) => {
     case 'observation': {
       const ret = await db.modifyOrderObservation(order, req.body.observation);
       if (ret === -1)
-        return res.status(403).json({ error: 'ORDER_ALREADY_COMPLETE' });
+        return res.status(403).json({ error: 'ORDER_NOT_FOUND' });
       return res.status(200).end();
     }
     default:

@@ -176,10 +176,8 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     const newOrder: Order = {
       complete: false,
       _id: uuidv4(),
-      cart: {
-        products,
-        total
-      },
+      products,
+      total,
       client: foundClient,
       observation
     };

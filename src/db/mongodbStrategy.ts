@@ -69,7 +69,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     throw new Error("Method not implemented.");
   }
   
-  async modifyOrderObservation(reference: string, observation: string | null): Promise<OrderType | -1> {
+  async modifyOrderObservation(reference: string, observation: string | null): Promise<OrderType | -1 | -2> {
     const order = await Order.findOne({ client: reference  })
     if(!order) return -1;
     if(order.complete) throw new Error('ALREADY COMPLETE');

@@ -57,7 +57,12 @@ export class mongodbStrategy implements IDBHandlerStrategy {
   }
 
   async getClientCurrentCart(clientReference: string): Promise<Cart | -1> {
-    throw new Error("Method not implemented.");
+    const client = await Client.findOne({$or: [{ name: clientReference }, { _id: clientReference }]}).populate('cart.products');
+    if(!client) return -1;
+
+    const cart = client.cart;
+    console.log(cart);
+    return cart;
   }
 
   async checkout(name: string, observation: string | undefined): Promise<OrderType | -1 | -2 | -3> {

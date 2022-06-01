@@ -43,14 +43,14 @@ export class mongodbStrategy implements IDBHandlerStrategy {
   }
   
   async markOrderAsComplete(reference: string): Promise<false | OrderType> {
-    const order = await Order.findOne({ "$or": [{ "_id": reference }, { "client": reference }] })
+    const order = await Order.findOne({ $or: [{ _id: reference }, { client: reference }] })
     if(order === null) return false;
     order.complete = true
     return await order.save();
   }
   
   async markOrderAsIncomplete(reference: string): Promise<false | OrderType> {
-    const order = await Order.findOne({ "$or": [{ "_id": reference }, { "client": reference }] })
+    const order = await Order.findOne({ $or: [{ _id: reference }, { client: reference }] })
     if(order === null) return false;
     order.complete = false
     return await order.save();
@@ -65,7 +65,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
   }
   
   async modifyOrderObservation(reference: string, observation: string | null): Promise<OrderType | -1> {
-    const order = await Order.findOne({ "$or": [{ "_id": reference }, { "client": reference }] })
+    const order = await Order.findOne({ client: reference  })
     if(!order) return -1;
     if(order.complete) throw new Error('ALREADY COMPLETE');
     order.observation = observation ? observation : undefined;

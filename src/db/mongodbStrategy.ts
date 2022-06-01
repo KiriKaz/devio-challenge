@@ -67,6 +67,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
   async modifyOrderObservation(reference: string, observation: string | null): Promise<OrderType | -1> {
     const order = await Order.findOne({ "$or": [{ "_id": reference }, { "client": reference }] })
     if(!order) return -1;
+    if(order.complete) throw new Error('ALREADY COMPLETE');
     order.observation = observation ? observation : undefined;
     return await order.save();
   }

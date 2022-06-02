@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import type { Cart, IDBHandlerStrategy, Order as OrderType, Product as ProductType } from "../types";
+import Client from './mongo/models/client';
 import Order from './mongo/models/order';
 import Product from './mongo/models/product';
 
@@ -33,13 +34,35 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     return product ? product : false;
   }
 
-  async addProductToCart(clientName: string, product: ProductType): Promise<boolean | -1> {
-    const client = ''; // TODO create Cart object type/model, start storing it in db
-    throw new Error("Method not implemented.");
+  async addProductToCartWithRef(clientName: string, productRef: string): Promise<boolean | -1> {
+    const product = await Product.findOne({ $or: [{ name: productRef }, { _id: productRef }]});
+
+    if(!product) return -1;
+
+    return await this.addProductToCart(clientName, product);
   }
 
-  async addProductToCartWithRef(client: string, productRef: string): Promise<boolean | -1> {
-    throw new Error("Method not implemented.");
+  async addProductToCart(clientName: string, product: ProductType): Promise<boolean> {
+    
+    let client = await Client.findOne({ name: clientName }).populate('cart.products');
+    
+    if(!client) {
+      const cart = {
+        products: [],
+        total: 0.0
+      }
+      console.log(cart);
+      client = await Client.create({
+        name: clientName,
+        cart: cart
+      });
+      console.log(client);
+    };
+        
+    client.cart.products.push(product);
+    client.cart.total = Number(client.cart.total) + product.price;  // As we're using Decimal128 here, the type is related differently in TS than when running it. Using the + operator performs a string add.
+    await client.save();
+    return true;
   }
   
   async markOrderAsComplete(reference: string): Promise<false | OrderType> {

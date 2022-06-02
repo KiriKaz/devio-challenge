@@ -12,20 +12,23 @@ const orderSchema = new Schema<Order>({
   //   type: String,
   //   required: true
   // },
-  cart: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Product',
-      default: []
-    }
-  ],
+  products: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true,
+    default: []
+  }],
+  total: {
+    type: Number,
+    required: true,
+    default: 0.0
+  },
+  observation: {
+    type: String
+  },
   client: {
     type: String,
     required: true
-  },
-  observation: {
-    type: String,
-    required: false
   }
 }, {
   toJSON: {

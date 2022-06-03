@@ -15,9 +15,9 @@ router.get('/:orderRef', async (req, res) => {
 });
 
 router.post('/checkout', async (req, res) => {
-  const { name, observation } = req.body;
+  const { name, paymentMethod, observation } = req.body;
 
-  const ret = await db.checkout(name, observation);
+  const ret = await db.checkout(name, paymentMethod, observation);
   return res.status(201).json({ order: ret });
 });
 

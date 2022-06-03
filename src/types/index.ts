@@ -74,6 +74,16 @@ export type Order = {
    * @type {string}
    */
   observation?: string,
+
+  /**
+   * ID of payment method used for payment.
+   * Supplied by the front-end.
+   * @example
+   * "VISACC1X" // The structure is up to the front-end. We're not concerned with the structure here.
+   * 
+   * @type {string}
+   */
+  paymentMethod: string
 }
 
 export type Cart = {
@@ -258,13 +268,14 @@ export interface IDBHandlerStrategy {
    * @see {@link Order} for what the client's cart becomes
    *
    * @param {string} clientReference Client name or client id
+   * @param {string} paymentMethod ID to reference payment method type
    * @param {(string | undefined)} observation Observation for the kitchen
    * @returns {Order} The order if it was a success
    * @throws {ClientNotFound}
    * @throws {CartEmpty}
    * @memberof IDBHandlerStrategy
    */
-  checkout(clientReference: string, observation: string | undefined): Promise<Order>
+  checkout(clientReference: string, paymentMethod: string, observation: string | undefined): Promise<Order>
 
   /**
    * Modifies the {@link Order}'s observation to the kitchen if the order isn't marked as complete.

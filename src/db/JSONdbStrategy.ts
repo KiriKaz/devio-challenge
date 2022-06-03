@@ -153,7 +153,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     return found.cart;
   }
 
-  async checkout(clientRef: string, observation?: string): Promise<Order> {
+  async checkout(clientRef: string, paymentMethod: string, observation?: string): Promise<Order> {
     
     const foundClient = this.clients.find(client => this.clientCheck(client, clientRef));
     if (!foundClient) throw new ClientNotFound();
@@ -170,6 +170,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
       products,
       total,
       client: foundClient,
+      paymentMethod,
       observation
     };
 

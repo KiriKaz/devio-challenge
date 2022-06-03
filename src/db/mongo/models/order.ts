@@ -37,6 +37,10 @@ const orderSchema = new Schema<Order>({
   client: {
     type: String,
     required: true
+  },
+  paymentMethod: {
+    type: String,
+    required: true
   }
 }, {
   toJSON: {

@@ -115,7 +115,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     return cart;
   }
 
-  async checkout(clientRef: string, observation: string | undefined): Promise<OrderType> {
+  async checkout(clientRef: string, paymentMethod: string, observation?: string): Promise<OrderType> {
     const client = await Client.findOne({ $or: [{ name: clientRef }, { _id: clientRef }] });
 
     if(!client) throw new ClientNotFound();
@@ -127,6 +127,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
       products: client.cart.products,
       total: client.cart.total,
       complete: false,
+      paymentMethod,
       observation
     })).save();
 

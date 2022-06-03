@@ -10,9 +10,14 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:orderRef', async (req, res) => {
-  const order = await db.getDetailsAboutOrder(req.params.orderRef);
+  const order = await db.getDetailsAboutOrder(decodeURIComponent(req.params.orderRef));
   return res.status(200).json(order);
 });
+
+router.get('/cart/:clientRef', async (req, res) => {
+  const cart = await db.getClientCurrentCart(decodeURIComponent(req.params.clientRef));
+  return res.status(200).json(cart);
+})
 
 router.post('/checkout', async (req, res) => {
   const { name, paymentMethod, observation } = req.body;
@@ -24,9 +29,9 @@ router.post('/checkout', async (req, res) => {
 router.post('/addProduct', async (req, res) => {
   const { name, product } = req.body;
 
-  const result = await db.addProductToCartWithRef(name, product);
+  const client = await db.addProductToCartWithRef(name, product);
 
-  return res.status(200).end();
+  return res.status(200).json(client);
 });
 
 router.patch('/cart', async (req, res) => {
@@ -42,7 +47,7 @@ router.patch('/cart', async (req, res) => {
 
 router.patch('/:order', async (req, res) => {
   const { op } = req.body;
-  const { order } = req.params;
+  const order = decodeURIComponent(req.params.order);
 
   switch (op.toLowerCase()) {
     case 'complete': {

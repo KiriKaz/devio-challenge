@@ -7,7 +7,7 @@ import { toJSON as JSONTransform } from '../common';
 // https://github.com/ramiel/mongoose-sequence
 // https://stackoverflow.com/a/71859686
 // https://github.com/ramiel/mongoose-sequence/issues/111
-// @ts-ignore 
+// @ts-expect-error
 const AutoInc = AutoIncrementFactory(mongoose);
 
 const orderSchema = new Schema<Order>({
@@ -49,7 +49,7 @@ const orderSchema = new Schema<Order>({
 // https://github.com/ramiel/mongoose-sequence
 // https://stackoverflow.com/a/71859686
 // https://github.com/ramiel/mongoose-sequence/issues/111
-// @ts-ignore 
+// @ts-expect-error
 orderSchema.plugin(AutoInc);
 
 export default model<Order>('Order', orderSchema);

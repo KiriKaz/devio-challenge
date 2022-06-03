@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import type { Cart, Client as ClientType, IDBHandlerStrategy, Order as OrderType, Product as ProductType } from "../types";
-import { ClientNotFound, OrderComplete, OrderNotFound, ProductNotFound, ProductNotInCart } from '../types/errors';
+import { CartEmpty, ClientNotFound, OrderComplete, OrderNotFound, ProductNotFound, ProductNotInCart } from '../types/errors';
 import Client from './mongo/models/client';
 import Order from './mongo/models/order';
 import Product from './mongo/models/product';
@@ -115,8 +115,28 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     return cart;
   }
 
-  async checkout(name: string, observation: string | undefined): Promise<OrderType> {
-    throw new Error("Method not implemented.");
+  async checkout(clientRef: string, observation: string | undefined): Promise<OrderType> {
+    const client = await Client.findOne({ $or: [{ name: clientRef }, { _id: clientRef }] });
+
+    if(!client) throw new ClientNotFound();
+
+    if(client.cart.products.length === 0) throw new CartEmpty();
+
+    const order = await (new Order({
+      client,
+      products: client.cart.products,
+      total: client.cart.total,
+      complete: false,
+      observation
+    })).save();
+
+    client.cart = {
+      products: [],
+      total: 0.0
+    };
+    await client.save();
+    
+    return order;
   }
   
   async modifyOrderObservation(reference: string, observation: string | null): Promise<OrderType> {

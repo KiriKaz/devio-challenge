@@ -1,7 +1,6 @@
 import mongoose, { model, Schema } from 'mongoose';
 import AutoIncrementFactory from 'mongoose-sequence';
 import { Order } from '../../../types';
-import { toJSON as JSONTransform } from '../common';
 
 // The @types/mongoose-sequence package is incorrect, and the dev doesn't care, so we ignore the error here. Follow docs here:
 // https://github.com/ramiel/mongoose-sequence
@@ -17,11 +16,11 @@ const orderSchema = new Schema<Order>({
     default: false
   },
   _id: {
-    type: Number,
-    required: true
+    type: Number
+    // required: true
   },
   products: [{
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: 'Product',
     required: true,
     default: []
@@ -43,9 +42,9 @@ const orderSchema = new Schema<Order>({
     required: true
   }
 }, {
-  toJSON: {
-    transform: JSONTransform
-  },
+  // toJSON: {
+  //   transform: JSONTransform
+  // },
   _id: false
 });
 

@@ -162,7 +162,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
 
     const total = products.reduce((prevTotal: number, currentProduct: Product) => prevTotal + currentProduct.price, 0.0);
 
-    const latestOrderNumber = this.orders[this.orders.length - 1]._id;
+    const latestOrderNumber = (!this.orders[this.orders.length - 1] ? 1 : this.orders[this.orders.length - 1]._id + 1);
 
     const newOrder: Order = {
       complete: false,

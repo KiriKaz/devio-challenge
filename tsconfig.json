@@ -5,6 +5,7 @@
     "target": "es2015",
     "noImplicitAny": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "sourceMap": true,
     "outDir": "dist",
     "strict": true,
@@ -15,6 +16,7 @@
     }
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/db/json/produtos.json"
   ]
 }

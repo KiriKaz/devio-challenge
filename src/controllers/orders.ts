@@ -34,15 +34,17 @@ router.patch('/:order', async (req, res) => {
   const { order } = req.params;
 
   switch (op.toLowerCase()) {
-    case 'complete':
-      db.markOrderAsComplete(order);
-      return res.status(200).end();
-    case 'incomplete':
-      db.markOrderAsIncomplete(order);
-      return res.status(200).end();
+    case 'complete': {
+      const updated = await db.markOrderAsComplete(order);
+      return res.status(200).json(updated);
+    }
+    case 'incomplete': {
+      const updated = await db.markOrderAsIncomplete(order);
+      return res.status(200).json(updated);
+    }
     case 'observation': {
-      await db.modifyOrderObservation(order, req.body.observation);
-      return res.status(200).end();
+      const updated = await db.modifyOrderObservation(order, req.body.observation);
+      return res.status(200).json(updated);
     }
     default:
       throw new UnknownOperation();

@@ -36,7 +36,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     const product = await Product.findOne({ $or: [{ name: productRef }, { _id: productRef }]});
 
     if(!product) throw new ProductNotFound();
-
+    
     return await this.addProductToCart(clientRef, product);
   }
 
@@ -67,6 +67,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     
     client.cart.products.push(product);
     client.cart.total = Number(client.cart.total) + product.price;  // As we're using Decimal128 here, the type is related differently in TS than when running it. Using the + operator performs a string add.
+    console.log("Added product", product._id, "to the cart of client", client.name, ".");
     const updatedClient = await client.save();
     return updatedClient;
   }
@@ -80,8 +81,10 @@ export class mongodbStrategy implements IDBHandlerStrategy {
 
     if(idx === -1) throw new ProductNotInCart();
 
-    console.log('Removed product', client.cart.products.splice(idx, 1));
-    console.log(client.cart.products);
+    const removedProd = client.cart.products.splice(idx, 1)[0];
+
+    console.log('Removed product', removedProd._id, "from the cart of client", client.name, ".");
+    client.cart.total -= removedProd.price;
 
     const updatedClient = await client.save();
     return updatedClient;
@@ -91,6 +94,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     const order = await Order.findOne({ $or: [{ _id: reference }, { client: reference }] })
     if(order === null) throw new OrderNotFound();
     order.complete = true
+    console.log("Marked order", order._id, "as complete.");
     return await order.save();
   }
   
@@ -98,6 +102,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     const order = await Order.findOne({ $or: [{ _id: reference }, { client: reference }] })
     if(order === null) throw new OrderNotFound();
     order.complete = false
+    console.log("Marked order", order._id, "as incomplete.");
     return await order.save();
   }
 
@@ -119,6 +124,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     if(!order) throw new OrderNotFound();
     if(order.complete) throw new OrderComplete();
     order.observation = observation ? observation : undefined;
+    console.log("Modified", order._id, "observation to '", observation, "'.");
     return await order.save();
   }
 }

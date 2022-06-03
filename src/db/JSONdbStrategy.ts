@@ -93,6 +93,8 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
       return client;
     });
 
+    console.log("Added product", product._id, "to the cart of client", newClient.name, ".");
+
     return newClient;
   }
   
@@ -105,8 +107,10 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
 
     if(idx === -1) throw new ProductNotInCart();
 
-    console.log('Removed product', foundClient.cart.products.splice(idx, 1));
-    console.log(foundClient.cart.products);
+    const removedProd = foundClient.cart.products.splice(idx, 1)[0];
+
+    console.log('Removed product', removedProd._id, "from the cart of client", foundClient.name, ".");
+    foundClient.cart.total -= removedProd.price;
 
     return foundClient;
   }
@@ -124,6 +128,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
       return { ...order };
     });
 
+    console.log("Marked order", foundOrder._id, "as complete.");
     return foundOrder;
   }
 
@@ -138,6 +143,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
       return { ...order };
     });
 
+    console.log("Marked order", foundOrder._id, "as incomplete.");
     return foundOrder;
   }
 
@@ -185,6 +191,8 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
       if(this.clientCheck(client, clientRef)) return newClient;
       return client;
     });
+
+    console.log('Checked out client', newClient.name, 'with order', newOrder._id);
     return newOrder;
   }
 
@@ -200,7 +208,8 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
       }
       return order;
     });
-    
+
+    console.log("Modified", foundOrder._id, "observation to '", observation, "'.");
     return foundOrder;
   }
 }

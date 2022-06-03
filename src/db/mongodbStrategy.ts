@@ -36,17 +36,17 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     return product;
   }
 
-  async addProductToCartWithRef(clientName: string, productRef: string): Promise<boolean> {
+  async addProductToCartWithRef(clientRef: string, productRef: string): Promise<boolean> {
     const product = await Product.findOne({ $or: [{ name: productRef }, { _id: productRef }]});
 
     if(!product) throw new ProductNotFound();
 
-    return await this.addProductToCart(clientName, product);
+    return await this.addProductToCart(clientRef, product);
   }
 
-  async addProductToCart(clientName: string, product: ProductType): Promise<boolean> {
+  async addProductToCart(clientRef: string, product: ProductType): Promise<boolean> {
     
-    let client = await Client.findOne({ name: clientName }).populate('cart.products');
+    let client = await Client.findOne({ $or: [{ name: clientRef }, { _id: clientRef }] }).populate('cart.products');
     
     if(!client) {
       const cart = {
@@ -55,12 +55,12 @@ export class mongodbStrategy implements IDBHandlerStrategy {
       }
       console.log(cart);
       client = await Client.create({
-        name: clientName,
+        name: clientRef,
         cart: cart
       });
       console.log(client);
     };
-        
+    
     client.cart.products.push(product);
     client.cart.total = Number(client.cart.total) + product.price;  // As we're using Decimal128 here, the type is related differently in TS than when running it. Using the + operator performs a string add.
     await client.save();

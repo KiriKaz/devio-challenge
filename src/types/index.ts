@@ -188,12 +188,12 @@ export interface IDBHandlerStrategy {
    * 
    * @see {@link Product} for what can identify a product
    *
-   * @param {string} client Full client name
+   * @param {string} clientRef Full client name or client id
    * @param {Product} product Instance of product to add
    * @returns {boolean} True if operation was a success
    * @memberof IDBHandlerStrategy
    */
-  addProductToCart(client: string, product: Product): Promise<boolean>
+  addProductToCart(clientRef: string, product: Product): Promise<boolean>
 
   /**
    * Add product to client's cart with reference to Product (name or id)

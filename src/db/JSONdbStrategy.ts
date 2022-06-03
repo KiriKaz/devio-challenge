@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Cart, Client, IDBHandlerStrategy, Order, Product } from "../types";
+import { CartEmpty, ClientNotFound, OrderComplete, OrderNotFound, ProductNotFound } from '../types/errors';
 
 export class JSONdbStrategy implements IDBHandlerStrategy {
   products: Product[];
@@ -36,24 +37,21 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     return this.orders;
   }
 
-  async getDetailsAboutOrder(orderRef: string): Promise<false | Order> {
-    const filtered = this.orders.filter(
+  async getDetailsAboutOrder(orderRef: string): Promise<Order> {
+    const found = this.orders.find(
       order => order._id === orderRef || order.client.name === orderRef,
     )
-    return filtered.length === 1 ? filtered[0] : false;
+    if(!found) throw new OrderNotFound();
+    return found;
   }
 
-  async getDetailsAboutProduct(reference: string): Promise<false | Product> {
-    const ref = reference.toLowerCase();
-    const found = this.products.filter(product => {
-      return product.name.toLowerCase() === ref || product._id.toLowerCase() === ref;
+  async getDetailsAboutProduct(reference: string): Promise<Product> {
+    const found = this.products.find(product => {
+      return product.name === reference || product._id === reference;
     });
-
-    // If there is no product by the given reference,
-    // return -1 to indicate there was an error, which
-    // can be handled by the front end whichever way
-    // they want.
-    return found === [] ? false : found[0];
+    
+    if(!found) throw new ProductNotFound();
+    return found;
   }
 
   async addProductToCart(clientReference: string, product: Product): Promise<boolean> {
@@ -74,7 +72,8 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
             total: 0
           };
           const clientProducts: Product[] = clientCart.products;
-
+          
+          // TODO make this prettier
           const newClientObject: Client = {
             ...foundClient,
             cart: {
@@ -87,19 +86,18 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
           }
           return newClientObject;
         }
-        
         return client;
       });
     }
     return true;
   }
 
-  async addProductToCartWithRef(clientRef: string, productRef: string): Promise<boolean | -1> {
+  async addProductToCartWithRef(clientRef: string, productRef: string): Promise<boolean> {
     const product = this.products.filter(
       product => product._id === productRef || product.name === productRef,
     )[0];
 
-    if (product === undefined) return -1;
+    if (product === undefined) throw new ProductNotFound();
 
     const client = this.clients.filter(client => this.clientCheck(client, clientRef));
     if (client.length === 0) {
@@ -126,9 +124,9 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     return true;
   }
 
-  async markOrderAsComplete(orderRef: string): Promise<false | Order> {
+  async markOrderAsComplete(orderRef: string): Promise<Order> {
     const foundOrder = this.orders.filter(order => this.orderCheck(order, orderRef))[0]
-    if(foundOrder === undefined) return false;
+    if(foundOrder === undefined) throw new OrderNotFound();
 
     foundOrder.complete = true;
 
@@ -142,9 +140,9 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     return foundOrder;
   }
 
-  async markOrderAsIncomplete(orderRef: string): Promise<false | Order> {
+  async markOrderAsIncomplete(orderRef: string): Promise<Order> {
     const foundOrder = this.orders.filter(order => this.orderCheck(order, orderRef))[0]
-    if(foundOrder === undefined) return false;
+    if(foundOrder === undefined) throw new OrderNotFound();
 
     foundOrder.complete = false;
 
@@ -159,15 +157,17 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
   }
 
   async getClientCurrentCart(clientRef: string): Promise<Cart> {
-    return this.clients.filter(client => this.clientCheck(client, clientRef))[0].cart;
+    const found = this.clients.find(client => this.clientCheck(client, clientRef));
+    if(!found) throw new ClientNotFound();
+    return found.cart;
   }
 
-  async checkout(clientRef: string, observation?: string): Promise<Order | -1 | -2> {
+  async checkout(clientRef: string, observation?: string): Promise<Order> {
     
-    const foundClient = this.clients.filter(client => this.clientCheck(client, clientRef))[0];
-    if (foundClient === undefined) return -1;
+    const foundClient = this.clients.find(client => this.clientCheck(client, clientRef));
+    if (!foundClient) throw new ClientNotFound();
     const products = foundClient.cart.products;
-    if (products === []) return -2;
+    if (products.length === 0) throw new CartEmpty();
 
     const total = products.reduce((prevTotal: number, currentProduct: Product) => {
       return prevTotal + currentProduct.price;
@@ -204,23 +204,19 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     return newOrder;
   }
 
-  async modifyOrderObservation(ref: string, observation: string | null): Promise<Order | -1> {
-    try {
-      const foundOrder = this.orders.filter(order => this.orderCheck(order, ref))[0];
-      foundOrder.observation = observation ? observation : undefined;
-      
-      this.orders = this.orders.map(order => {
-        if (this.orderCheck(order, ref)) {
-          if (!order.complete) return foundOrder;
-          throw new Error('ALREADY COMPLETE');
-        }
-        return order;
-      });
-      
-      return foundOrder;
-    } catch (e) {
-      console.log('Error during modifyOrderObs:', e);
-      return -1;
-    }
+  async modifyOrderObservation(ref: string, observation: string | null): Promise<Order> {
+    const foundOrder = this.orders.find(order => this.orderCheck(order, ref));
+    if(!foundOrder) throw new OrderNotFound();
+    foundOrder.observation = observation ? observation : undefined;
+    
+    this.orders = this.orders.map(order => {
+      if (this.orderCheck(order, ref)) {
+        if (order.complete) throw new OrderComplete();
+        return foundOrder;
+      }
+      return order;
+    });
+    
+    return foundOrder;
   }
 }

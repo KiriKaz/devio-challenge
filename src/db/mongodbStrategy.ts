@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import type { Cart, IDBHandlerStrategy, Order as OrderType, Product as ProductType } from "../types";
+import { ClientNotFound, OrderComplete, OrderNotFound, ProductNotFound } from '../types/errors';
 import Client from './mongo/models/client';
 import Order from './mongo/models/order';
 import Product from './mongo/models/product';
@@ -23,21 +24,22 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     return orders;
   }
 
-  async getDetailsAboutOrder(reference: string): Promise<false | OrderType> {
+  async getDetailsAboutOrder(reference: string): Promise<OrderType> {
     const order = await Order.findOne({ "$or": [{ "_id": reference }, { "client": reference }] })
-    return order ? order : false;
+    if(!order) throw new OrderNotFound();
+    return order;
   }
   
-  async getDetailsAboutProduct(reference: string): Promise<false | ProductType> {
+  async getDetailsAboutProduct(reference: string): Promise<ProductType> {
     const product = await Product.findOne({ "$or": [{ "_id": reference }, { "name": reference }] })
-    console.log(reference, product);
-    return product ? product : false;
+    if(!product) throw new ProductNotFound();
+    return product;
   }
 
-  async addProductToCartWithRef(clientName: string, productRef: string): Promise<boolean | -1> {
+  async addProductToCartWithRef(clientName: string, productRef: string): Promise<boolean> {
     const product = await Product.findOne({ $or: [{ name: productRef }, { _id: productRef }]});
 
-    if(!product) return -1;
+    if(!product) throw new ProductNotFound();
 
     return await this.addProductToCart(clientName, product);
   }
@@ -65,37 +67,37 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     return true;
   }
   
-  async markOrderAsComplete(reference: string): Promise<false | OrderType> {
+  async markOrderAsComplete(reference: string): Promise<OrderType> {
     const order = await Order.findOne({ $or: [{ _id: reference }, { client: reference }] })
-    if(order === null) return false;
+    if(order === null) throw new OrderNotFound();
     order.complete = true
     return await order.save();
   }
   
-  async markOrderAsIncomplete(reference: string): Promise<false | OrderType> {
+  async markOrderAsIncomplete(reference: string): Promise<OrderType> {
     const order = await Order.findOne({ $or: [{ _id: reference }, { client: reference }] })
-    if(order === null) return false;
+    if(order === null) throw new OrderNotFound();
     order.complete = false
     return await order.save();
   }
 
-  async getClientCurrentCart(clientReference: string): Promise<Cart | -1> {
+  async getClientCurrentCart(clientReference: string): Promise<Cart> {
     const client = await Client.findOne({$or: [{ name: clientReference }, { _id: clientReference }]}).populate('cart.products');
-    if(!client) return -1;
+    if(!client) throw new ClientNotFound();
 
     const cart = client.cart;
     console.log(cart);
     return cart;
   }
 
-  async checkout(name: string, observation: string | undefined): Promise<OrderType | -1 | -2 | -3> {
+  async checkout(name: string, observation: string | undefined): Promise<OrderType> {
     throw new Error("Method not implemented.");
   }
   
-  async modifyOrderObservation(reference: string, observation: string | null): Promise<OrderType | -1 | -2> {
+  async modifyOrderObservation(reference: string, observation: string | null): Promise<OrderType> {
     const order = await Order.findOne({ client: reference  })
-    if(!order) return -1;
-    if(order.complete) throw new Error('ALREADY COMPLETE');
+    if(!order) throw new OrderNotFound();
+    if(order.complete) throw new OrderComplete();
     order.observation = observation ? observation : undefined;
     return await order.save();
   }

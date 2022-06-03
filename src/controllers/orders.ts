@@ -41,7 +41,7 @@ router.patch('/:order', async (req, res) => {
       db.markOrderAsIncomplete(order);
       return res.status(200).end();
     case 'observation': {
-      const ret = await db.modifyOrderObservation(order, req.body.observation);
+      await db.modifyOrderObservation(order, req.body.observation);
       return res.status(200).end();
     }
     default:

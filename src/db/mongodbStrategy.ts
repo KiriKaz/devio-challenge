@@ -21,7 +21,14 @@ export class mongodbStrategy implements IDBHandlerStrategy {
   }
 
   async getDetailsAboutOrder(reference: string): Promise<OrderType> {
-    const order = await Order.findOne({ "$or": [{ "_id": reference }, { "client": reference }] })
+    let order;
+
+    if(/^-?\d+$/.test(reference)) {
+      order = await Order.findOne({ _id: reference });
+    } else {
+      order = await Order.findOne({ name: reference });
+    }
+    
     if(!order) throw new OrderNotFound();
     return order;
   }
@@ -49,9 +56,20 @@ export class mongodbStrategy implements IDBHandlerStrategy {
   }
   
   async addProductToCart(clientRef: string, product: ProductType): Promise<ClientType> {
-    
-    let client = await Client.findOne({ $or: [{ name: clientRef }, { _id: clientRef }] }).populate('cart.products');
-    
+
+    let client;
+
+    if(mongoose.Types.ObjectId.isValid(clientRef)) {
+      const cast = new mongoose.Types.ObjectId(clientRef)
+      if(cast.equals(clientRef)) {
+        client = await Client.findOne({ _id: clientRef }).populate('cart.products');
+      } else {
+        client = await Client.findOne({ name: clientRef }).populate('cart.products');
+      }
+    } else {
+      client = await Client.findOne({ name: clientRef }).populate('cart.products');
+    }
+        
     if(!client) {
       const cart = {
         products: [],
@@ -67,13 +85,24 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     
     client.cart.products.push(product);
     client.cart.total = Number(client.cart.total) + product.price;  // As we're using Decimal128 here, the type is related differently in TS than when running it. Using the + operator performs a string add.
-    console.log("Added product", product._id, "to the cart of client", client.name, ".");
+    console.log("Added product", product._id, "to the cart of client", client.name, ".", client._id);
     const updatedClient = await client.save();
     return updatedClient;
   }
   
   async removeProductFromCart(clientRef: string, product: ProductType): Promise<ClientType> {
-    const client = await Client.findOne({ $or: [{ name: clientRef }, { _id: clientRef }]});
+    let client;
+
+    if(mongoose.Types.ObjectId.isValid(clientRef)) {
+      const cast = new mongoose.Types.ObjectId(clientRef)
+      if(cast.equals(clientRef)) {
+        client = await Client.findOne({ _id: clientRef }).populate('cart.products');
+      } else {
+        client = await Client.findOne({ name: clientRef }).populate('cart.products');
+      }
+    } else {
+      client = await Client.findOne({ name: clientRef }).populate('cart.products');
+    }
     
     if(!client) throw new ClientNotFound();
 
@@ -91,7 +120,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
   }
   
   async markOrderAsComplete(reference: string): Promise<OrderType> {
-    const order = await Order.findOne({ $or: [{ _id: reference }, { client: reference }] })
+    const order = await Order.findOne({ $or: [{ _id: reference }, { client: reference }] }).populate('products')
     if(order === null) throw new OrderNotFound();
     order.complete = true
     console.log("Marked order", order._id, "as complete.");
@@ -99,15 +128,25 @@ export class mongodbStrategy implements IDBHandlerStrategy {
   }
   
   async markOrderAsIncomplete(reference: string): Promise<OrderType> {
-    const order = await Order.findOne({ $or: [{ _id: reference }, { client: reference }] })
+    const order = await Order.findOne({ $or: [{ _id: reference }, { client: reference }] }).populate('products')
     if(order === null) throw new OrderNotFound();
     order.complete = false
     console.log("Marked order", order._id, "as incomplete.");
     return await order.save();
   }
 
-  async getClientCurrentCart(clientReference: string): Promise<Cart> {
-    const client = await Client.findOne({$or: [{ name: clientReference }, { _id: clientReference }]}).populate('cart.products');
+  async getClientCurrentCart(clientRef: string): Promise<Cart> {
+    let client;
+    if(mongoose.Types.ObjectId.isValid(clientRef)) {
+      const cast = new mongoose.Types.ObjectId(clientRef)
+      if(cast.equals(clientRef)) {
+        client = await Client.findOne({ _id: clientRef }).populate('cart.products');
+      } else {
+        client = await Client.findOne({ name: clientRef }).populate('cart.products');
+      }
+    } else {
+      client = await Client.findOne({ name: clientRef }).populate('cart.products');
+    }
     if(!client) throw new ClientNotFound();
 
     const cart = client.cart;
@@ -116,14 +155,25 @@ export class mongodbStrategy implements IDBHandlerStrategy {
   }
 
   async checkout(clientRef: string, paymentMethod: string, observation?: string): Promise<OrderType> {
-    const client = await Client.findOne({ $or: [{ name: clientRef }, { _id: clientRef }] });
+    let client;
+
+    if(mongoose.Types.ObjectId.isValid(clientRef)) {
+      const cast = new mongoose.Types.ObjectId(clientRef)
+      if(cast.equals(clientRef)) {
+        client = await Client.findOne({ _id: clientRef }).populate('cart.products');
+      } else {
+        client = await Client.findOne({ name: clientRef }).populate('cart.products');
+      }
+    } else {
+      client = await Client.findOne({ name: clientRef }).populate('cart.products');
+    }
 
     if(!client) throw new ClientNotFound();
 
     if(client.cart.products.length === 0) throw new CartEmpty();
 
     const order = await (new Order({
-      client,
+      client: client._id,
       products: client.cart.products,
       total: client.cart.total,
       complete: false,
@@ -141,7 +191,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
   }
   
   async modifyOrderObservation(reference: string, observation: string | null): Promise<OrderType> {
-    const order = await Order.findOne({ client: reference  })
+    const order = await Order.findOne({ _id: reference  });
     if(!order) throw new OrderNotFound();
     if(order.complete) throw new OrderComplete();
     order.observation = observation ? observation : undefined;

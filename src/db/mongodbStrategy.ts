@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import type { Cart, IDBHandlerStrategy, Order as OrderType, Product as ProductType } from "../types";
+import type { Cart, Client as ClientType, IDBHandlerStrategy, Order as OrderType, Product as ProductType } from "../types";
 import { ClientNotFound, OrderComplete, OrderNotFound, ProductNotFound, ProductNotInCart } from '../types/errors';
 import Client from './mongo/models/client';
 import Order from './mongo/models/order';
@@ -36,7 +36,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     return product;
   }
 
-  async addProductToCartWithRef(clientRef: string, productRef: string): Promise<boolean> {
+  async addProductToCartWithRef(clientRef: string, productRef: string): Promise<ClientType> {
     const product = await Product.findOne({ $or: [{ name: productRef }, { _id: productRef }]});
 
     if(!product) throw new ProductNotFound();
@@ -44,7 +44,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     return await this.addProductToCart(clientRef, product);
   }
 
-  async removeProductFromCartWithRef(clientRef: string, productRef: string): Promise<boolean> {
+  async removeProductFromCartWithRef(clientRef: string, productRef: string): Promise<ClientType> {
     const product = await Product.findOne({ $or: [{ name: productRef }, { _id: productRef }]});
     
     if(!product) throw new ProductNotFound();
@@ -52,7 +52,7 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     return await this.removeProductFromCart(clientRef, product);
   }
   
-  async addProductToCart(clientRef: string, product: ProductType): Promise<boolean> {
+  async addProductToCart(clientRef: string, product: ProductType): Promise<ClientType> {
     
     let client = await Client.findOne({ $or: [{ name: clientRef }, { _id: clientRef }] }).populate('cart.products');
     
@@ -71,11 +71,11 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     
     client.cart.products.push(product);
     client.cart.total = Number(client.cart.total) + product.price;  // As we're using Decimal128 here, the type is related differently in TS than when running it. Using the + operator performs a string add.
-    await client.save();
-    return true;
+    const updatedClient = await client.save();
+    return updatedClient;
   }
   
-  async removeProductFromCart(clientRef: string, product: ProductType): Promise<boolean> {
+  async removeProductFromCart(clientRef: string, product: ProductType): Promise<ClientType> {
     const client = await Client.findOne({ $or: [{ name: clientRef }, { _id: clientRef }]});
     
     if(!client) throw new ClientNotFound();
@@ -87,8 +87,8 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     console.log('Removed product', client.cart.products.splice(idx, 1));
     console.log(client.cart.products);
 
-    await client.save();
-    return true;
+    const updatedClient = await client.save();
+    return updatedClient;
   }
   
   async markOrderAsComplete(reference: string): Promise<OrderType> {

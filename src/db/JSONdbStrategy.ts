@@ -54,7 +54,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     return found;
   }
   
-  async addProductToCartWithRef(clientRef: string, productRef: string): Promise<boolean> {
+  async addProductToCartWithRef(clientRef: string, productRef: string): Promise<Client> {
     const product = this.products.find(
       product => product._id === productRef || product.name === productRef,
     );
@@ -64,41 +64,44 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     return this.addProductToCart(clientRef, product);
   }
     
-  async removeProductFromCartWithRef(clientRef: string, productRef: string): Promise<boolean> {
+  async removeProductFromCartWithRef(clientRef: string, productRef: string): Promise<Client> {
     const product = this.products.find(p => p._id === productRef || p.name === productRef);
     if(!product) throw new ProductNotFound();
 
     return this.removeProductFromCart(clientRef, product);
   }
 
-  async addProductToCart(clientRef: string, product: Product): Promise<boolean> {
+  async addProductToCart(clientRef: string, product: Product): Promise<Client> {
     const foundClient = this.clients.find(client => this.clientCheck(client, clientRef));
     
     if (!foundClient) {
-      this.clients.push({
+      const newClient = {
         _id: uuidv4(),
         name: clientRef,
         cart: {
           products: [product],
           total: product.price
         }
-      });
-      return true;
+      }
+      this.clients.push(newClient);
+      return newClient;
     }
+
+    const newClient = { ...foundClient };
+    newClient.cart.products.push(product);
+    newClient.cart.total += product.price;
 
     this.clients = this.clients.map(client => {
       if (this.clientCheck(client, clientRef)) {
-        const newClientObject: Client = { ...foundClient };
-        newClientObject.cart.products.push(product);
-        return newClientObject;
+        return newClient;
       }
       return client;
     });
 
-    return true;
+    return newClient;
   }
   
-  async removeProductFromCart(clientRef: string, product: Product): Promise<boolean> {
+  async removeProductFromCart(clientRef: string, product: Product): Promise<Client> {
     const foundClient = this.clients.find(client => this.clientCheck(client, clientRef));
 
     if(!foundClient) throw new ClientNotFound();
@@ -110,7 +113,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     console.log('Removed product', foundClient.cart.products.splice(idx, 1));
     console.log(foundClient.cart.products);
 
-    return true;
+    return foundClient;
   }
 
   async markOrderAsComplete(orderRef: string): Promise<Order> {

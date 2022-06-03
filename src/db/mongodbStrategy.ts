@@ -10,10 +10,6 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     mongoose.connect(uri, () => console.log('Mongoose connected.'));
   }
 
-  async save(): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
   async getProducts(): Promise<ProductType[]> {
     const products = await Product.find({});
     return products;

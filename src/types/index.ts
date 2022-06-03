@@ -135,12 +135,6 @@ export type Client = {
  * @interface IDBHandlerStrategy
  */
 export interface IDBHandlerStrategy {
-  /**
-   * Saves the data to the DB the strategy handles explicitly. Depending on the strategy, this is done regularly, or does nothing.
-   * 
-   * @returns {void} void
-   */
-  save(): Promise<void>
   
   /**
    * Get all loaded products and their details.

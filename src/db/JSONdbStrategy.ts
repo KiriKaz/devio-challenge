@@ -24,11 +24,6 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     return this;
   }
 
-  async save(): Promise<void> {
-    throw new Error("Method not implemented.");
-    // TODO implement save function?
-  }
-
   async getProducts(): Promise<Product[]> {
     return this.products;
   }

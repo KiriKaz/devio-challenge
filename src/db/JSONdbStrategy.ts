@@ -134,9 +134,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     foundOrder.complete = false;
 
     this.orders = this.orders.map(order => {
-      if (this.orderCheck(order, orderRef)) {
-        return foundOrder;
-      }
+      if (this.orderCheck(order, orderRef)) return foundOrder;
       return { ...order };
     });
 
@@ -156,9 +154,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     const products = foundClient.cart.products;
     if (products.length === 0) throw new CartEmpty();
 
-    const total = products.reduce((prevTotal: number, currentProduct: Product) => {
-      return prevTotal + currentProduct.price;
-    }, 0.0);
+    const total = products.reduce((prevTotal: number, currentProduct: Product) => prevTotal + currentProduct.price, 0.0);
 
     const latestOrderNumber = this.orders[this.orders.length - 1]._id;
 

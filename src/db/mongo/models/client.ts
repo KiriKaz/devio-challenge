@@ -3,6 +3,10 @@ import { Client } from '../../../types';
 import { toJSON as JSONTransform } from '../common';
 
 const clientSchema = new Schema<Client>({
+  _id: {
+    type: String,
+    required: true
+  },
   name: {
     type: String,
     required: true
@@ -25,7 +29,8 @@ const clientSchema = new Schema<Client>({
 }, {
   toJSON: {
     transform: JSONTransform
-  }
+  },
+  _id: false
 });
 
 export default model<Client>('Client', clientSchema, 'clients');

@@ -14,7 +14,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
     this.clients = [];
   }
 
-  private orderCheck(order: Order, ref: string) { return order._id === ref || order.client.name === ref; }
+  private orderCheck(order: Order, ref: string) { return order._id === Number(ref) || order.client.name === ref; }
 
   private clientCheck(client: Client, ref: string) { return client._id === ref || client.name === ref; }
 
@@ -34,7 +34,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
 
   async getDetailsAboutOrder(orderRef: string): Promise<Order> {
     const found = this.orders.find(
-      order => order._id === orderRef || order.client.name === orderRef,
+      order => order._id === Number(orderRef) || order.client.name === orderRef,
     )
     if(!found) throw new OrderNotFound();
     return found;
@@ -160,9 +160,11 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
       return prevTotal + currentProduct.price;
     }, 0.0);
 
+    const latestOrderNumber = this.orders[this.orders.length - 1]._id;
+
     const newOrder: Order = {
       complete: false,
-      _id: uuidv4(),
+      _id: latestOrderNumber + 1,
       products,
       total,
       client: foundClient,
@@ -178,14 +180,13 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
       // TODO this part can be expanded to save the history of fulfilled orders into a json file if need be with this.save();
     }
 
+    const newClient = {...foundClient, cart: {
+      products: [],
+      total: 0.0
+    }}
+
     this.clients = this.clients.map(client => {
-      if(this.clientCheck(client, clientRef)) {
-        const newClient: Client = {...client, cart: {
-          products: [],
-          total: 0.0
-        }};
-        return newClient;
-      }
+      if(this.clientCheck(client, clientRef)) return newClient;
       return client;
     });
     return newOrder;

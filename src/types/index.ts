@@ -29,11 +29,11 @@ export type Product = {
 
 export type Order = {
   /**
-   * Order ID.
+   * Order ID. Autoincrement.
    *
-   * @type {mongoose.Types.ObjectId}
+   * @type {number}
    */
-  _id: string,
+  _id: number,
 
   /**
    * Whether or not an order is complete and ready for pickup.

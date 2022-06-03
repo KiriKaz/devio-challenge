@@ -1,6 +1,14 @@
-import { model, Schema } from 'mongoose';
+import mongoose, { model, Schema } from 'mongoose';
+import AutoIncrementFactory from 'mongoose-sequence';
 import { Order } from '../../../types';
 import { toJSON as JSONTransform } from '../common';
+
+// The @types/mongoose-sequence package is incorrect, and the dev doesn't care, so we ignore the error here. Follow docs here:
+// https://github.com/ramiel/mongoose-sequence
+// https://stackoverflow.com/a/71859686
+// https://github.com/ramiel/mongoose-sequence/issues/111
+// @ts-ignore 
+const AutoInc = AutoIncrementFactory(mongoose);
 
 const orderSchema = new Schema<Order>({
   complete: {
@@ -8,10 +16,10 @@ const orderSchema = new Schema<Order>({
     required: true,
     default: false
   },
-  // id: {
-  //   type: String,
-  //   required: true
-  // },
+  _id: {
+    type: Number,
+    required: true
+  },
   products: [{
     type: Schema.Types.ObjectId,
     ref: 'Product',
@@ -33,7 +41,15 @@ const orderSchema = new Schema<Order>({
 }, {
   toJSON: {
     transform: JSONTransform
-  }
+  },
+  _id: false
 });
+
+// The @types/mongoose-sequence package is incorrect, and the dev doesn't care, so we ignore the error here. Follow docs here:
+// https://github.com/ramiel/mongoose-sequence
+// https://stackoverflow.com/a/71859686
+// https://github.com/ramiel/mongoose-sequence/issues/111
+// @ts-ignore 
+orderSchema.plugin(AutoInc);
 
 export default model<Order>('Order', orderSchema);

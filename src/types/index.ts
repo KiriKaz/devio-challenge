@@ -183,6 +183,28 @@ export interface IDBHandlerStrategy {
 
   
   /**
+   * Add product to client's cart with reference to Product (name or id)
+   * 
+   * @param {string} clientRef Full client name or client id
+   * @param {string} productRef id or name of product
+   * @returns {true} True if operation was a success
+   * @throws {ProductNotFound}
+   * @memberof IDBHandlerStrategy
+   */
+  addProductToCartWithRef(clientRef: string, productRef: string): Promise<boolean>
+  
+  /**
+   * Removes a product from the client's cart.
+   * 
+   * @param {string} clientRef Full client name or client id
+   * @param {string} productRef id or name of product
+   * @returns {true} True if operation was a success
+   * @throws {ProductNotFound}
+   * @memberof IDBHandlerStrategy
+   */
+  removeProductFromCartWithRef(clientRef: string, productRef: string): Promise<boolean>
+
+  /**
    * Add product to client's cart with qualified instance of product as opposed to product identifier.
    * If the client doesn't exist, they're created.
    * 
@@ -196,15 +218,16 @@ export interface IDBHandlerStrategy {
   addProductToCart(clientRef: string, product: Product): Promise<boolean>
 
   /**
-   * Add product to client's cart with reference to Product (name or id)
+   * Removes a product from the client's cart.
    * 
-   * @param {string} client Full client name
-   * @param {string} productRef id or name of product
+   * @param {string} clientRef Full client name or client id
+   * @param {Product} product Instance of product to add
    * @returns {true} True if operation was a success
-   * @throws {ProductNotFound}
+   * @throws {ClientNotFound}
+   * @throws {ProductNotInCart}
    * @memberof IDBHandlerStrategy
    */
-  addProductToCartWithRef(client: string, productRef: string): Promise<boolean>
+  removeProductFromCart(clientRef: string, product: Product): Promise<boolean>
 
   /**
    * Mark an order as complete, for after it's been cooked and prepared for the client to take.

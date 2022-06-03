@@ -37,6 +37,7 @@ const errorMessages = {
   OrderNotFound: "ORDER_NOT_FOUND",
   CartEmpty: "CART_EMPTY",
   OrderComplete: "ORDER_COMPLETE",
+  ProductNotInCart: "PRODUCT_NOT_IN_CART",
   UnknownOperation: "UNKNOWN_OPERATION",
   UnknownError: "UNKNOWN_ERROR",
 }
@@ -99,6 +100,15 @@ export class OrderComplete extends CustomError implements IRequirementError {
   constructor() {
     super(400, errorMessages.OrderComplete);
     this.requirementsUnmet = [ "orderIncomplete" ];
+  }
+}
+
+export class ProductNotInCart extends CustomError implements IRequirementError {
+  requirementsUnmet: string[];
+
+  constructor() {
+    super(400, errorMessages.ProductNotInCart);
+    this.requirementsUnmet = [ "productInCart" ];
   }
 }
 

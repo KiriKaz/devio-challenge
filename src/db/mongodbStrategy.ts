@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import type { Cart, IDBHandlerStrategy, Order as OrderType, Product as ProductType } from "../types";
-import { ClientNotFound, OrderComplete, OrderNotFound, ProductNotFound } from '../types/errors';
+import { ClientNotFound, OrderComplete, OrderNotFound, ProductNotFound, ProductNotInCart } from '../types/errors';
 import Client from './mongo/models/client';
 import Order from './mongo/models/order';
 import Product from './mongo/models/product';
@@ -44,6 +44,14 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     return await this.addProductToCart(clientRef, product);
   }
 
+  async removeProductFromCartWithRef(clientRef: string, productRef: string): Promise<boolean> {
+    const product = await Product.findOne({ $or: [{ name: productRef }, { _id: productRef }]});
+    
+    if(!product) throw new ProductNotFound();
+
+    return await this.removeProductFromCart(clientRef, product);
+  }
+  
   async addProductToCart(clientRef: string, product: ProductType): Promise<boolean> {
     
     let client = await Client.findOne({ $or: [{ name: clientRef }, { _id: clientRef }] }).populate('cart.products');
@@ -63,6 +71,22 @@ export class mongodbStrategy implements IDBHandlerStrategy {
     
     client.cart.products.push(product);
     client.cart.total = Number(client.cart.total) + product.price;  // As we're using Decimal128 here, the type is related differently in TS than when running it. Using the + operator performs a string add.
+    await client.save();
+    return true;
+  }
+  
+  async removeProductFromCart(clientRef: string, product: ProductType): Promise<boolean> {
+    const client = await Client.findOne({ $or: [{ name: clientRef }, { _id: clientRef }]});
+    
+    if(!client) throw new ClientNotFound();
+
+    const idx = client.cart.products.findIndex(cartProduct => cartProduct._id === product._id);
+
+    if(idx === -1) throw new ProductNotInCart();
+
+    console.log('Removed product', client.cart.products.splice(idx, 1));
+    console.log(client.cart.products);
+
     await client.save();
     return true;
   }

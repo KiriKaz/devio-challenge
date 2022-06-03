@@ -29,6 +29,17 @@ router.post('/addProduct', async (req, res) => {
   return res.status(200).end();
 });
 
+router.patch('/cart', async (req, res) => {
+  const { op, clientRef } = req.body;
+
+  switch(op.toLowerCase()) {
+    case 'removeproduct': {
+      const updated = await db.removeProductFromCartWithRef(clientRef, req.body.productRef);
+      return res.status(200).json(updated);
+    }
+  }
+});
+
 router.patch('/:order', async (req, res) => {
   const { op } = req.body;
   const { order } = req.params;

@@ -19,7 +19,7 @@ export class JSONdbStrategy implements IDBHandlerStrategy {
   private clientCheck(client: Client, ref: string) { return client._id === ref || client.name === ref; }
 
   reloadProductsFromMemory() {
-    const products = require('./json/produtos.json');
+    const products = require('src/db/json/produtos.json');
     this.products = products;
     return this;
   }
